@@ -1,6 +1,22 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { MapPin, Phone, Camera, Clock, Plus, X, Utensils, Users, Sprout, Check, Loader2 } from "lucide-react";
+import { MapPin, Phone, Camera, Clock, Plus, X, Utensils, Users, Sprout, Check, Loader2, Pencil } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+
+const MY_LISTINGS_KEY = "myListingIds";
+
+function getMyListingIds() {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(MY_LISTINGS_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function addMyListingId(id) {
+  const current = getMyListingIds();
+  localStorage.setItem(MY_LISTINGS_KEY, JSON.stringify([...current, id]));
+}
 
 function zipDistance(a, b) {
   const na = parseInt(a, 10);
@@ -22,7 +38,7 @@ function Tag({ children, tone = "sage" }) {
   );
 }
 
-function ListingCard({ listing, onReveal, revealed, onClaim }) {
+function ListingCard({ listing, onReveal, revealed, onClaim, onEdit, isMine }) {
   return (
     <div className="relative bg-[#FBF8F0] border border-[#2A2620]/10 rounded-2xl overflow-hidden flex flex-col">
       {listing.claimed && (
@@ -38,9 +54,20 @@ function ListingCard({ listing, onReveal, revealed, onClaim }) {
         )}
       </div>
       <div className="p-5 flex flex-col gap-3 flex-1">
-        <div>
-          <h3 className="font-serif text-xl leading-snug text-[#2A2620]">{listing.title}</h3>
-          <p className="text-sm text-[#2A2620]/70 mt-1 leading-relaxed">{listing.description}</p>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h3 className="font-serif text-xl leading-snug text-[#2A2620]">{listing.title}</h3>
+            <p className="text-sm text-[#2A2620]/70 mt-1 leading-relaxed">{listing.description}</p>
+          </div>
+          {isMine && (
+            <button
+              onClick={() => onEdit(listing)}
+              title="Edit your listing"
+              className="shrink-0 flex items-center gap-1 text-xs font-semibold text-[#2A2620]/60 border border-[#2A2620]/20 rounded-full px-2.5 py-1 hover:bg-[#2A2620]/5 transition-colors"
+            >
+              <Pencil size={12} /> Edit
+            </button>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           {(listing.tags || []).map((t) => (
@@ -82,10 +109,17 @@ function ListingCard({ listing, onReveal, revealed, onClaim }) {
   );
 }
 
-function PostForm({ onSubmit, onClose, submitting }) {
-  const [form, setForm] = useState({ title: "", description: "", zip: "", phone: "", tags: "" });
+function PostForm({ onSubmit, onClose, submitting, editingListing }) {
+  const isEditing = !!editingListing;
+  const [form, setForm] = useState({
+    title: editingListing?.title || "",
+    description: editingListing?.description || "",
+    zip: editingListing?.zip || "",
+    phone: editingListing?.phone || "",
+    tags: editingListing?.tags?.join(", ") || "",
+  });
   const [photoFile, setPhotoFile] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(editingListing?.photo_url || null);
 
   const update = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -111,8 +145,12 @@ function PostForm({ onSubmit, onClose, submitting }) {
         <button type="button" onClick={onClose} className="absolute top-4 right-4 text-[#2A2620]/50 hover:text-[#2A2620]">
           <X size={20} />
         </button>
-        <h2 className="font-serif text-2xl text-[#2A2620] mb-1">Post leftover food</h2>
-        <p className="text-sm text-[#2A2620]/60 mb-6">A few details so someone nearby can come pick it up.</p>
+        <h2 className="font-serif text-2xl text-[#2A2620] mb-1">
+          {isEditing ? "Edit your listing" : "Post leftover food"}
+        </h2>
+        <p className="text-sm text-[#2A2620]/60 mb-6">
+          {isEditing ? "Fix anything that changed — quantity, dietary notes, etc." : "A few details so someone nearby can come pick it up."}
+        </p>
 
         <label className="block text-xs font-semibold uppercase tracking-wide text-[#2A2620]/60 mb-1">What is it?</label>
         <input
@@ -180,7 +218,7 @@ function PostForm({ onSubmit, onClose, submitting }) {
           className="w-full flex items-center justify-center gap-2 bg-[#1F2E22] text-[#F5EFE0] rounded-full py-3 font-semibold hover:bg-[#2A2620] transition-colors disabled:opacity-60"
         >
           {submitting && <Loader2 size={16} className="animate-spin" />}
-          {submitting ? "Posting..." : "Post it"}
+          {submitting ? "Saving..." : isEditing ? "Save changes" : "Post it"}
         </button>
       </form>
     </div>
@@ -192,9 +230,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [zipQuery, setZipQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editingListing, setEditingListing] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [revealedIds, setRevealedIds] = useState(new Set());
   const [banner, setBanner] = useState(null);
+  const [myListingIds, setMyListingIds] = useState([]);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -208,6 +248,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchListings();
+    setMyListingIds(getMyListingIds());
   }, []);
 
   const filtered = useMemo(() => {
@@ -227,9 +268,19 @@ export default function Home() {
     fetchListings();
   };
 
+  const openEdit = (listing) => {
+    setEditingListing(listing);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingListing(null);
+  };
+
   const handleSubmit = async (form) => {
     setSubmitting(true);
-    let photo_url = null;
+    let photo_url = editingListing?.photo_url || null;
 
     if (form.photoFile) {
       const fileExt = form.photoFile.name.split(".").pop();
@@ -243,24 +294,39 @@ export default function Home() {
       }
     }
 
-    const { error } = await supabase.from("listings").insert({
+    const payload = {
       title: form.title,
       description: form.description || "No description provided.",
       zip: form.zip,
       phone: form.phone,
       tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
       photo_url,
-      claimed: false,
-    });
+    };
+
+    let error;
+    if (editingListing) {
+      ({ error } = await supabase.from("listings").update(payload).eq("id", editingListing.id));
+    } else {
+      const { data, error: insertError } = await supabase
+        .from("listings")
+        .insert({ ...payload, claimed: false })
+        .select()
+        .single();
+      error = insertError;
+      if (!error && data) {
+        addMyListingId(data.id);
+        setMyListingIds(getMyListingIds());
+      }
+    }
 
     setSubmitting(false);
-    setShowForm(false);
+    closeForm();
     if (!error) {
-      setBanner("Your listing is live — thank you for donating instead of tossing it.");
+      setBanner(editingListing ? "Your listing has been updated." : "Your listing is live — thank you for donating instead of tossing it.");
       setTimeout(() => setBanner(null), 5000);
       fetchListings();
     } else {
-      setBanner("Something went wrong posting your listing. Please try again.");
+      setBanner("Something went wrong saving your listing. Please try again.");
       setTimeout(() => setBanner(null), 5000);
     }
   };
@@ -337,6 +403,8 @@ export default function Home() {
                 revealed={revealedIds.has(listing.id)}
                 onReveal={reveal}
                 onClaim={markClaimed}
+                onEdit={openEdit}
+                isMine={myListingIds.includes(listing.id)}
               />
             ))}
           </div>
@@ -350,7 +418,7 @@ export default function Home() {
       </footer>
 
       {showForm && (
-        <PostForm onSubmit={handleSubmit} onClose={() => setShowForm(false)} submitting={submitting} />
+        <PostForm onSubmit={handleSubmit} onClose={closeForm} submitting={submitting} editingListing={editingListing} />
       )}
     </div>
   );
