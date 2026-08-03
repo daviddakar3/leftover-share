@@ -3,6 +3,7 @@ import { MapPin, Phone, Camera, Clock, Plus, X, Utensils, Users, Sprout, Check, 
 import { supabase } from "../lib/supabaseClient";
 
 const MY_LISTINGS_KEY = "myListingIds";
+const DISCLAIMER_KEY = "hasAcceptedDisclaimer";
 
 function getMyListingIds() {
   if (typeof window === "undefined") return [];
@@ -225,7 +226,39 @@ function PostForm({ onSubmit, onClose, submitting, editingListing }) {
   );
 }
 
+function DisclaimerModal({ onAccept }) {
+  return (
+    <div className="fixed inset-0 bg-[#1F2E22]/80 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+      <div className="bg-[#FBF8F0] rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <h2 className="font-serif text-2xl text-[#2A2620] mb-4">Before you continue</h2>
+
+        <div className="text-sm text-[#2A2620]/80 leading-relaxed space-y-3 mb-6">
+          <p>
+            This site connects people who have leftover food with people who can pick it up. We don't
+            inspect or handle the food ourselves.
+          </p>
+          <p>
+            <strong>Use your judgment.</strong> If you're posting, make sure the food has been handled
+            safely. If you're picking up, check that it looks and smells okay before eating it.
+          </p>
+          <p>
+            By continuing, you agree you're using this site at your own discretion.
+          </p>
+        </div>
+
+        <button
+          onClick={onAccept}
+          className="w-full bg-[#1F2E22] text-[#F5EFE0] rounded-full py-3 font-semibold hover:bg-[#2A2620] transition-colors"
+        >
+          I understand — continue to the site
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(true);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [zipQuery, setZipQuery] = useState("");
@@ -249,7 +282,13 @@ export default function Home() {
   useEffect(() => {
     fetchListings();
     setMyListingIds(getMyListingIds());
+    setDisclaimerAccepted(localStorage.getItem(DISCLAIMER_KEY) === "true");
   }, []);
+
+  const acceptDisclaimer = () => {
+    localStorage.setItem(DISCLAIMER_KEY, "true");
+    setDisclaimerAccepted(true);
+  };
 
   const filtered = useMemo(() => {
     let list = [...listings];
@@ -420,6 +459,8 @@ export default function Home() {
       {showForm && (
         <PostForm onSubmit={handleSubmit} onClose={closeForm} submitting={submitting} editingListing={editingListing} />
       )}
+
+      {!disclaimerAccepted && <DisclaimerModal onAccept={acceptDisclaimer} />}
     </div>
   );
 }
