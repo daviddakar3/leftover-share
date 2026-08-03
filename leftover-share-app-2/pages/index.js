@@ -381,7 +381,7 @@ export default function Home() {
             The party's over. The food is still good.
           </h1>
           <p className="mt-5 text-[#F5EFE0]/70 max-w-lg text-lg leading-relaxed">
-            Post what's left from your event, like a bar mitzvah, a wedding, an office party,
+            Post what's left from your event, such as a bar mitzvah, a wedding, an office party,
             and someone nearby, a shelter or a family who needs it, comes to pick it up.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
