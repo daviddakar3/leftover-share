@@ -239,7 +239,7 @@ function DisclaimerModal({ onAccept }) {
           </p>
           <p>
             <strong>Use your judgment.</strong> If you're posting, make sure the food has been handled
-            safely. If you're picking up, check that it looks and smells okay before eating it.
+            safely. We encourage those who are picking up to first check the food is fit to be served. 
           </p>
           <p>
             By continuing, you agree you're using this site at your own discretion.
