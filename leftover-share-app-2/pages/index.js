@@ -378,7 +378,7 @@ export default function Home() {
       </Head>
       <header className="bg-[#1F2E22] text-[#F5EFE0] relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10">
-          <div className="flex flex-col items-center text-center mb-6">
+          <div className="flex flex-col items-center text-center mb-10">
             <div className="flex items-center gap-2 mb-3 text-[#E8A93B] text-sm font-semibold uppercase tracking-widest">
               <Sprout size={16} /> Nothing goes to waste
             </div>
