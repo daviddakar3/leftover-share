@@ -377,19 +377,21 @@ export default function Home() {
         <title>Neighbor's Table</title>
       </Head>
       <header className="bg-[#1F2E22] text-[#F5EFE0] relative overflow-hidden">
-        <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10 flex flex-col items-center text-center">
-          <div className="flex items-center gap-2 mb-4 text-[#E8A93B] text-sm font-semibold uppercase tracking-widest">
-            <Sprout size={16} /> Nothing goes to waste
+        <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10">
+          <div className="flex flex-col items-center text-center mb-6">
+            <div className="flex items-center gap-2 mb-3 text-[#E8A93B] text-sm font-semibold uppercase tracking-widest">
+              <Sprout size={16} /> Nothing goes to waste
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl text-[#F5EFE0]">Neighbor's Table</h2>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl text-[#F5EFE0] mb-2">Neighbor's Table</h2>
           <h1 className="font-serif text-4xl sm:text-5xl leading-[1.1] max-w-2xl">
             The party's over. The food is still good.
           </h1>
-          <p className="mt-5 text-[#F5EFE0]/70 max-w-lg text-lg leading-relaxed">
+          <p className="mt-5 text-[#F5EFE0]/70 max-w-lg text-base leading-relaxed">
             Post what's left from your event, like a bar mitzvah, a wedding, or an office party,
             and someone nearby, a shelter or a family who needs it, comes to pick it up.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 bg-[#E8A93B] text-[#2A2620] px-6 py-3 rounded-full font-semibold hover:brightness-95 transition-all"
