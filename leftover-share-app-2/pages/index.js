@@ -377,7 +377,7 @@ export default function Home() {
         <title>Neighbor's Table</title>
       </Head>
       <header className="bg-[#1F2E22] text-[#F5EFE0] relative overflow-hidden">
-        <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10">
+        <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-4 text-[#E8A93B] text-sm font-semibold uppercase tracking-widest">
             <Sprout size={16} /> Nothing goes to waste
           </div>
@@ -389,7 +389,7 @@ export default function Home() {
             Post what's left from your event, like a bar mitzvah, a wedding, or an office party,
             and someone nearby, a shelter or a family who needs it, comes to pick it up.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 bg-[#E8A93B] text-[#2A2620] px-6 py-3 rounded-full font-semibold hover:brightness-95 transition-all"
