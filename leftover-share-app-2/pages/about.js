@@ -34,7 +34,7 @@ export default function About() {
         <h1 className="font-serif text-3xl text-[#2A2620] mb-6">About Us</h1>
         <p className="text-[#2A2620]/80 leading-relaxed text-lg">
           Neighbor's Table is an organization founded by David Dakar, a 17-year-old high school
-          student, after noticing how much extra food goes unused at various different events
+          student, who noticed the large amount of extra food goes untouched at various different events
           that could easily benefit families and shelters in the community. Neighbor's Table is
           dedicated to reducing food waste and strengthening community support. When neighbors
           come together, even a simple act like sharing an extra tray of food; it has the power
