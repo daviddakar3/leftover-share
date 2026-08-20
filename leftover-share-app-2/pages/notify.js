@@ -50,7 +50,7 @@ export default function Notify() {
       <main className="max-w-lg mx-auto px-6 py-16">
         <h1 className="font-serif text-3xl text-[#2A2620] mb-3">Get notified</h1>
         <p className="text-[#2A2620]/70 leading-relaxed mb-8">
-          Enter your email and we'll let you know whenever someone posts new leftover food.
+          Enter your email and you will be notified whenever new food is posted. 
         </p>
 
         {status === "success" ? (
