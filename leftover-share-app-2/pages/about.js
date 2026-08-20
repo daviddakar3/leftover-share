@@ -10,14 +10,20 @@ export default function About() {
         <title>About — Neighbor's Table</title>
       </Head>
       <header className="bg-[#1F2E22] text-[#F5EFE0] relative overflow-hidden">
-        <nav className="absolute top-6 right-6 sm:top-8 sm:right-8 z-20">
-          <Link
-            href="/"
-            className="text-sm font-semibold uppercase tracking-widest text-[#F5EFE0]/80 hover:text-[#F5EFE0] border-b border-transparent hover:border-[#E8A93B] pb-1 transition-colors"
-          >
-            Home
-          </Link>
-        </nav>
+        <nav className="absolute top-6 right-6 sm:top-8 sm:right-8 z-20 flex items-center gap-6">
+  <Link
+    href="/notify"
+    className="text-sm font-semibold uppercase tracking-widest text-[#F5EFE0]/80 hover:text-[#F5EFE0] border-b border-transparent hover:border-[#E8A93B] pb-1 transition-colors"
+  >
+    Notify Me
+  </Link>
+  <Link
+    href="/about"
+    className="text-sm font-semibold uppercase tracking-widest text-[#F5EFE0]/80 hover:text-[#F5EFE0] border-b border-transparent hover:border-[#E8A93B] pb-1 transition-colors"
+  >
+    About
+  </Link>
+</nav>
         <div className="max-w-5xl mx-auto px-6 pt-14 pb-16 relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-3 text-[#E8A93B] text-sm font-semibold uppercase tracking-widest">
             <Sprout size={16} /> Nothing goes to waste
